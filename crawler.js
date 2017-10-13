@@ -16,10 +16,8 @@ request(pageToVisit, function(error, response, body) {
     branchesUrl = baseUrl + "repos/clinical/" + repo.name + "/branches" + urlSufix
     request(branchesUrl, function(error, response, body) {
       var branches = JSON.parse(response.body)
-      // ssconsole.log(branches);
       Object.keys(branches).map(function(objectKey, index) {
         var branch = branches[objectKey];
-         // console.log(branch.name);
         if(branch.name != "master"){
           pullsUrl = baseUrl + "repos/clinical/" + repo.name + "/pulls" + urlSufix
           var hasPullRequest = false;
@@ -32,18 +30,16 @@ request(pageToVisit, function(error, response, body) {
                 
                 issueUrl = baseUrl + "repos/clinical/" + repo.name + "/issues/" + pull.number + urlSufix
                 request(issueUrl, function(error, response, body) {
-                  var issue = JSON.parse(response.body)
-                  Object.keys(issue).map(function(objectKey, index) {
-                    var issueInfo = issue[objectKey];
-                    
-                  });
+                  var issue = JSON.parse(response.body);
+                  if(issue.labels.length == 0){
+                    console.log("Repositório " + repo.name + " na branch " + branch.name + " no Pull Request " + pull.number + " não possui labels");
+                  }
                 });
 
-                console.log(pull);
               }
             });
             if(!hasPullRequest){
-              // console.log("Repositório " + repo.name + " na " + branch.name + " não tem pull request!");
+              console.log("Repositório " + repo.name + " na branch " + branch.name + " não possui um pull request!");
             }
           });
         }
